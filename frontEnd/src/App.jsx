@@ -23,7 +23,7 @@ function App() {
     fetch(url)
       .then((res) => res.json())
       .then((data) => setData(data))
-  })
+  }, [])
 
   const click = () => {
     const data = {

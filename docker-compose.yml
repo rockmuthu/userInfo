@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    platform: linux/amd64
+    environment:
+      - POSTGRES_PASSWORD=abc123
+      - POSTGRES_DB=testdoc
+    ports:
+      - 4000:5432
+    networks:
+      - postgres-network
+    volumes:
+      - ./postgres-db:/var/lib/postgresql/data
+  backend:
+    container_name: testbackend
+    image: testbackend:1.0.0
+    build:
+      context: ./backEnd
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    ports:
+      - 3000:5000
+    networks:
+      - postgres-network
+    depends_on:
+      - postgres
+  frontend:
+    container_name: testfrontend
+    image: testfrontend:1.0.0
+    build:
+      context: ./frontEnd
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    ports:
+      - 3008:3000
+    networks:
+      - postgres-network
+    depends_on:
+      - backend
+
+networks:
+  postgres-network:
+    driver: bridge
