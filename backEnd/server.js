@@ -1,27 +1,26 @@
-import express from "express";
-import { PrismaClient } from "@prisma/client";
-import cors from "cors";
+import express from "express"
+import { PrismaClient } from "@prisma/client"
+import cors from "cors"
 
-const app = express();
+const app = express()
+const port = 5000
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-app.use(express.json());
-app.use(cors());
+app.use(express.json())
+app.use(cors())
 
 
 // Create Data
 app.post("/", async (req, res) => {
-  const user = await prisma.details.create({ data: req.body })
-  res.json(user)
+  await prisma.details.create({ data: req.body }).then(() => res.sendStatus(200))
 })
 
 // Get Data
-app.get("/", async (req, res) => {
-  const allUser = await prisma.details.findMany()
-  res.json(allUser)
+app.get("/", async (_req, res) => {
+  await prisma.details.findMany({}).then((data) => res.status(200).json(data))
 })
 
 
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.listen(port, () => console.log(`Server running on port ${port}`))

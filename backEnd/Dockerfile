@@ -1,13 +1,13 @@
 # Backend Dockerfile
-FROM node:latest as build
+FROM node:21.5.0-alpine3.18 as builder
 
 WORKDIR /app
 
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn install
-
+RUN yarn
 COPY . .
 
-CMD ["sh", "yarn start"]
+EXPOSE 5000
+

@@ -1,45 +1,44 @@
 version: "3.8"
 services:
-  postgres:
-    image: postgres:latest
-    restart: always
+  database:
+    image: postgres
     platform: linux/amd64
     environment:
-      - POSTGRES_PASSWORD=abc123
-      - POSTGRES_DB=testdoc
+      POSTGRES_PASSWORD: "abc123"
     ports:
-      - 4000:5432
+      - 5432:5432
     networks:
       - postgres-network
     volumes:
       - ./postgres-db:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
   backend:
-    container_name: testbackend
-    image: testbackend:1.0.0
+    container_name: backend
+    image: backend:1.0
     build:
       context: ./backEnd
       dockerfile: Dockerfile
-    platform: linux/amd64
     ports:
-      - 3000:5000
-    networks:
-      - postgres-network
+      - 5050:5000
+    volumes:
+      - ./backEnd:/app
     depends_on:
-      - postgres
-  frontend:
-    container_name: testfrontend
-    image: testfrontend:1.0.0
+      - database
+    command: ["yarn", "start"]
+  web:
+    container_name: frontend
+    image: frontend:1.0
     build:
       context: ./frontEnd
       dockerfile: Dockerfile
-    platform: linux/amd64
     ports:
-      - 3008:3000
-    networks:
-      - postgres-network
+      - 2020:80
+    volumes:
+      - ./frontEnd:/app
     depends_on:
       - backend
-
+    command: ["nginx", "-g", "daemon off;"]
+    
 networks:
   postgres-network:
     driver: bridge

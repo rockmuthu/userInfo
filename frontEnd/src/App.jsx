@@ -17,7 +17,7 @@ function App() {
   const [age, setAge] = useState('')
   const [email, setEmail] = useState('')
 
-  const url = "http://localhost:5000/"
+  const url = "http://localhost:5050/"
 
   useEffect(() => {
     fetch(url)
@@ -41,7 +41,6 @@ function App() {
       body: JSON.stringify(data)
     })
       .then(res => {
-        console.log("Data Send")
         setName('')
         setAge('')
         setEmail('')
